@@ -1,0 +1,54 @@
+
+header{
+    padding: 10px;
+    background-color: crimson;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    text-align: center;
+    font-size: 35px;
+    color: beige;
+}
+
+.info{
+    padding: 5px;
+    text-align: center;
+    float: left;
+    width: 65%;
+    margin: 10px;
+
+}
+
+.newsletter{
+    float: right;
+    width: 30%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: aliceblue;
+    background-color: darkslategray;
+}
+
+.showcase{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+
+.form-labels{
+    float: left;
+    width: 30%;
+    margin: 1px;
+    padding: 2px;
+}
+
+.form-inputs{
+    float: left;
+    width: 40%;
+    margin: 1px;
+    padding: 2px;
+}
+
+#order-form{
+    padding: 10px;
+    margin: 10%;
+    width: 70%;
+
+}
