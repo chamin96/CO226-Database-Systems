@@ -123,13 +123,21 @@ SELECT * FROM MOVIE CROSS JOIN RATING;
 SELECT MOVIE.movie_id,MOVIE.title,RATING.movie_id,RATING.rev_id,RATING.stars FROM MOVIE CROSS JOIN RATING;
 
 #10
-SELECT MOVIE.movie_id,MOVIE.title,RATING.rev_id,RATING.stars FROM MOVIE CROSS JOIN RATING;
+SELECT MOVIE.movie_id,MOVIE.title,RATING.rev_id,RATING.stars FROM MOVIE
+	INNER JOIN RATING
+    ON MOVIE.movie_id=RATING.movie_id;
 
 #11
-SELECT MOVIE.movie_id,MOVIE.title,RATING.rev_id,RATING.stars FROM MOVIE CROSS JOIN RATING WHERE RATING.stars<=3;
+SELECT MOVIE.movie_id,MOVIE.title,RATING.rev_id,RATING.stars FROM MOVIE
+	INNER JOIN RATING 
+    ON MOVIE.movie_id=RATING.movie_id
+    WHERE RATING.stars<=3;
 
 #12
-SELECT MOVIE.movie_id,MOVIE.title,RATING.rev_id,RATING.stars FROM MOVIE CROSS JOIN RATING WHERE RATING.stars<=4 AND RATING.stars>=2;
+SELECT MOVIE.movie_id,MOVIE.title,RATING.rev_id,RATING.stars FROM MOVIE 
+	INNER JOIN RATING 
+    ON MOVIE.movie_id=RATING.movie_id
+    WHERE RATING.stars<=4 AND RATING.stars>=2;
 
 #13
 SELECT rev_id,movie_id FROM RATING;
@@ -144,12 +152,69 @@ SELECT RATING.movie_id,MOVIE.title,RATING.rev_id,REVIEWER.rev_name,RATING.stars 
     
 #16
 SELECT RATING.movie_id,MOVIE.title,RATING.rev_id,REVIEWER.rev_name,RATING.stars FROM RATING 
-	CROSS JOIN MOVIE ON RATING.movie_id=MOVIE.movie_id
-    CROSS JOIN REVIEWER ON RATING.rev_id=REVIEWER.rev_id
+	INNER JOIN MOVIE ON RATING.movie_id=MOVIE.movie_id
+    INNER JOIN REVIEWER ON RATING.rev_id=REVIEWER.rev_id
     WHERE stars=5;
     
 #17
 SELECT MOVIE.title,REVIEWER.rev_name,RATING.stars FROM RATING
-	LEFT JOIN REVIEWER ON RATING.rev_id=REVIEWER.rev_id
-    LEFT JOIN MOVIE ON RATING.movie_id=MOVIE.movie_id
-    WHERE rating_date=NULL;
+	INNER JOIN REVIEWER
+    ON RATING.rev_id=REVIEWER.rev_id
+    INNER JOIN MOVIE
+    ON RATING.movie_id=MOVIE.movie_id
+    WHERE RATING.rating_date IS NULL;
+    
+#18
+SELECT concat(MOVIE.director) dir_rev_name
+FROM MOVIE
+WHERE director IS NOT NULL
+    UNION
+SELECT REVIEWER.rev_name
+FROM REVIEWER
+WHERE rev_name IS NOT NULL;
+
+#19
+SELECT * FROM REVIEWER
+	WHERE rev_name LIKE '%Martinez';
+    
+#20
+SELECT * FROM RATING
+	WHERE rating_date LIKE '%____\-__\-0%';
+
+#21
+SELECT * FROM RATING
+	WHERE date_format(rating_date,'%d')<'10';
+
+#22
+UPDATE RATING
+	SET stars=stars+1
+    WHERE rev_id=(SELECT rev_id FROM REVIEWER WHERE rev_name='Brittany Harris');
+SELECT * FROM RATING;
+
+#23
+SELECT MOVIE.title,REVIEWER.rev_name,RATING.stars FROM RATING
+	INNER JOIN REVIEWER
+    ON RATING.rev_id=REVIEWER.rev_id
+    INNER JOIN MOVIE
+    ON RATING.movie_id=MOVIE.movie_id
+    ORDER BY MOVIE.title;
+
+#24
+SELECT MOVIE.title,RATING.stars,RATING.rating_date FROM RATING
+    INNER JOIN MOVIE
+    ON RATING.movie_id=MOVIE.movie_id
+    ORDER BY MOVIE.title;
+
+SELECT MOVIE.title,RATING.stars,RATING.rating_date FROM RATING
+    INNER JOIN MOVIE
+    ON RATING.movie_id=MOVIE.movie_id
+    ORDER BY RATING.stars DESC;
+
+SELECT MOVIE.title,RATING.stars,RATING.rating_date FROM RATING
+    INNER JOIN MOVIE
+    ON RATING.movie_id=MOVIE.movie_id
+    ORDER BY RATING.rating_date DESC;
+    
+#25
+SELECT DISTINCT director AS dir_and_rev FROM MOVIE
+	WHERE director=(SELECT DISTINCT rev_name FROM REVIEWER INNER JOIN MOVIE ON REVIEWER.rev_name=MOVIE.director);
