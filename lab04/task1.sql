@@ -229,11 +229,9 @@ SELECT DISTINCT * FROM MOVIE
 	WHERE director NOT IN (SELECT DISTINCT rev_name FROM REVIEWER INNER JOIN MOVIE ON REVIEWER.rev_name=MOVIE.director);
     
 #02
-SELECT * FROM RATING
-	WHERE rev_id=(SELECT rev_id FROM REVIEWER WHERE rev_name="Sarah Martinez");
+SELECT * FROM RATING WHERE rev_id=(SELECT rev_id FROM REVIEWER WHERE rev_name="Sarah Martinez");
 
-SELECT * FROM RATING
-	WHERE rev_id NOT IN (SELECT rev_id FROM REVIEWER WHERE rev_name="Sarah Martinez");
+SELECT * FROM RATING WHERE rev_id NOT IN (SELECT rev_id FROM REVIEWER WHERE rev_name="Sarah Martinez");
 
 #03
 SELECT DISTINCT movie_id FROM RATING 
@@ -305,6 +303,33 @@ SELECT rev_name FROM REVIEWER WHERE rev_id IN (SELECT rev_id FROM RATING GROUP B
 
 SELECT rev_name FROM REVIEWER rev WHERE rev.rev_id IN (SELECT r.rev_id FROM RATING r GROUP BY r.rev_id HAVING COUNT(*)>=3);
 
-SELECT m.title,SUM(r.stars) FROM RATING r, MOVIE m WHERE r.movie_id=m.movie_id GROUP BY r.movie_id ORDER BY m.title;
+#10
+SELECT
+	MOVIE.movie_id, MOVIE.title, RATING.rev_id, RATING.stars as Stars
+FROM
+    MOVIE INNER JOIN RATING
+WHERE
+	MOVIE.movie_id = RATING.movie_id;
+    
+#11
+SELECT m.title, AVG(r.stars) FROM RATING r,MOVIE m
+	WHERE r.movie_id = m.movie_id
+    GROUP BY m.movie_id
+	ORDER BY AVG(r.stars) DESC , m.title ASC;
 
+#12
+DELETE  RATING FROM RATING
+	INNER JOIN MOVIE
+    ON MOVIE.movie_id = RATING.movie_id
+    WHERE MOVIE.year < 1970 OR MOVIE.year > 2000;
+    
+#13
+DELETE RATING FROM RATING
+	WHERE rating_date IS NULL;
 
+#14
+INSERT INTO RATING(rev_id, movie_id, stars)
+	SELECT rev_id, movie_id, '5' FROM MOVIE CROSS JOIN REVIEWER WHERE Reviewer_Name = 'James Cameron';
+    
+#15
+UPDATE MOVIE SET released=released+25 WHERE movie_id IN (SELECT movie_id FROM RATING GROUP BY movie_id HAVING AVG(stars)>=4);
