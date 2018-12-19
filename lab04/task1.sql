@@ -187,7 +187,7 @@ SELECT * FROM RATING
 
 #22
 UPDATE RATING
-	SET stars=stars+1
+	SET stars=stars-1
     WHERE rev_id=(SELECT rev_id FROM REVIEWER WHERE rev_name='Brittany Harris');
 SELECT * FROM RATING;
 
@@ -218,3 +218,93 @@ SELECT MOVIE.title,RATING.stars,RATING.rating_date FROM RATING
 #25
 SELECT DISTINCT director AS dir_and_rev FROM MOVIE
 	WHERE director=(SELECT DISTINCT rev_name FROM REVIEWER INNER JOIN MOVIE ON REVIEWER.rev_name=MOVIE.director);
+
+#-----------------------------------------------------------------------------------------------------------------
+#LAB05
+#01
+SELECT DISTINCT * FROM MOVIE
+	WHERE director=(SELECT DISTINCT rev_name FROM REVIEWER INNER JOIN MOVIE ON REVIEWER.rev_name=MOVIE.director);
+
+SELECT DISTINCT * FROM MOVIE
+	WHERE director NOT IN (SELECT DISTINCT rev_name FROM REVIEWER INNER JOIN MOVIE ON REVIEWER.rev_name=MOVIE.director);
+    
+#02
+SELECT * FROM RATING
+	WHERE rev_id=(SELECT rev_id FROM REVIEWER WHERE rev_name="Sarah Martinez");
+
+SELECT * FROM RATING
+	WHERE rev_id NOT IN (SELECT rev_id FROM REVIEWER WHERE rev_name="Sarah Martinez");
+
+#03
+SELECT DISTINCT movie_id FROM RATING 
+	WHERE stars<(SELECT MIN(stars) FROM RATING WHERE movie_id=103);
+
+SELECT DISTINCT movie_id FROM RATING 
+	WHERE stars<=(SELECT MIN(stars) FROM RATING WHERE movie_id=103);
+
+SELECT DISTINCT movie_id FROM RATING 
+	WHERE stars IN (SELECT stars FROM RATING WHERE (movie_id=103));
+    
+SELECT DISTINCT movie_id FROM RATING 
+	WHERE stars>(SELECT MAX(stars) FROM RATING WHERE movie_id=103);
+
+SELECT DISTINCT movie_id FROM RATING 
+	WHERE stars>=(SELECT MAX(stars) FROM RATING WHERE movie_id=103);
+    
+SELECT DISTINCT movie_id FROM RATING 
+	WHERE stars NOT IN (SELECT stars FROM RATING WHERE (movie_id=103));
+
+#04
+SELECT DISTINCT rev_id FROM RATING
+	WHERE movie_id IN (SELECT movie_id FROM RATING) AND
+    stars IN (SELECT stars FROM RATING) AND
+    rating_date='2011-01-12';
+
+#05
+SELECT rating_date FROM RATING
+	WHERE stars=4 OR stars=5
+    ORDER BY rating_date;
+
+SELECT rating_date FROM RATING
+	WHERE stars IN (SELECT stars WHERE stars>=4)
+    ORDER BY rating_date;
+    
+#06
+SELECT title FROM MOVIE
+	WHERE movie_id NOT IN (SELECT movie_id FROM RATING);
+
+SELECT title FROM MOVIE m
+	WHERE movie_id NOT IN (SELECT r.movie_id FROM RATING r WHERE r.movie_id = m.movie_id);
+
+#07
+SELECT rev.rev_name FROM REVIEWER rev
+	INNER JOIN RATING r
+    ON rev.rev_id=r.rev_id
+    WHERE r.rating_date IS NULL;
+
+SELECT rev_name FROM REVIEWER
+	WHERE rev_id IN
+    (SELECT rev_id FROM RATING WHERE rating_date IS NULL);
+
+
+#08
+SELECT m.title,MAX(r.stars) FROM RATING r, MOVIE m WHERE r.movie_id=m.movie_id GROUP BY r.movie_id ORDER BY m.title;
+
+SELECT m.title,MIN(r.stars) FROM RATING r, MOVIE m WHERE r.movie_id=m.movie_id GROUP BY r.movie_id ORDER BY m.title;
+
+SELECT m.title,AVG(r.stars) FROM RATING r, MOVIE m WHERE r.movie_id=m.movie_id GROUP BY r.movie_id ORDER BY m.title;
+
+SELECT m.title,SUM(r.stars) FROM RATING r, MOVIE m WHERE r.movie_id=m.movie_id GROUP BY r.movie_id ORDER BY m.title;
+
+SELECT m.title,COUNT(r.stars) FROM RATING r, MOVIE m WHERE r.movie_id=m.movie_id GROUP BY r.movie_id ORDER BY m.title;
+
+#09
+SELECT rev.rev_name FROM REVIEWER rev,RATING r  WHERE r.rev_id=rev.rev_id  GROUP BY rev.rev_name HAVING COUNT(r.rev_id)>=3;
+
+SELECT rev_name FROM REVIEWER WHERE rev_id IN (SELECT rev_id FROM RATING GROUP BY rev_id HAVING COUNT(*)>=3);
+
+SELECT rev_name FROM REVIEWER rev WHERE rev.rev_id IN (SELECT r.rev_id FROM RATING r GROUP BY r.rev_id HAVING COUNT(*)>=3);
+
+SELECT m.title,SUM(r.stars) FROM RATING r, MOVIE m WHERE r.movie_id=m.movie_id GROUP BY r.movie_id ORDER BY m.title;
+
+
