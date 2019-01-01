@@ -7,7 +7,7 @@ CREATE TABLE Student(
   reg_num INT NOT NULL PRIMARY KEY,
   gpa FLOAT(3,2),
   con_reg_num INT,
-  class VARCHAR(10)
+  class VARCHAR(50)
 );
 
 INSERT INTO Student(name,reg_num,gpa) VALUES
@@ -107,5 +107,20 @@ INSERT INTO LateRegistration VALUES
   ("Kumari","Galle",20,111,8),
   ("Perera","Gampaha",19,324,9),
   ("Silva","Ampara",24,231,10);
+
+SELECT * FROM Student;
+
+#10
+DELIMITER //
+CREATE PROCEDURE setClass()
+  BEGIN
+    UPDATE Student SET class="First class honors" WHERE gpa>=3.7;
+    UPDATE Student SET class="Second class honors-upper division" WHERE gpa<3.7 AND gpa>=3.3;
+    UPDATE Student SET class="Second class honors-lower division" WHERE gpa<3.3 AND gpa>=2.7;
+    UPDATE Student SET class="Third class honors" WHERE gpa<2.7 AND gpa>=2.0;
+  END //
+DELIMITER ;
+
+CALL setClass();
 
 SELECT * FROM Student;
